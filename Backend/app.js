@@ -2,7 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 /* *************************** */
 /* Configuring the application */
 /* *************************** */
@@ -23,7 +23,6 @@ app.get("/programme", async function (request, response) {
   const db = client.db("Cinema");
   const collection = db.collection("Programme");
   const movies = await collection.find({}).toArray();
-
   response.json(movies);
 });
 
@@ -34,17 +33,11 @@ app.post("/seats", async function (request, response) {
   await client.connect();
   const db = client.db("Cinema");
   const collection = db.collection("Programme");
-  console.log(`Request body ${request.body}`);
-  const programmeFound = await collection.find({
-    _id: request.body,
-  });
-  // const movies = await collection.find({_id:  request.body }).toArray()[0];
-
-  // const result = await movies.insertOne(request.body);
-  // request.on("end", () => {
-  //   response.json(movies);
-  // });
-  response.json({ programme: programmeFound });
+  const programmeFound = (await collection
+    .find({ "_id": new ObjectId(request.body.id) }).toArray())[0];
+  console.log(programmeFound);
+  const seats = programmeFound.seats;
+  response.json(seats);
 });
 /* ************************************************ */
 app.listen(8000, function () {
