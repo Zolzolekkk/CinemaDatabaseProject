@@ -4,8 +4,10 @@ import { ObjectId } from "mongodb";
 
 const dataSchema = new mongoose.Schema({
   movieid: {
-    required: true,
-    type: ObjectId
+    // required: true,
+    // type: ObjectId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Movie'
   },
   "3d": {
     type: Boolean,
@@ -59,7 +61,8 @@ const dataSchema = new mongoose.Schema({
     // ]
 
   ],
-  tickets: [userTicket]
+  //tickets: [userTicket]
+  tickets: []
 
 }
 

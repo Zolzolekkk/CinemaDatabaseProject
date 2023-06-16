@@ -8,7 +8,7 @@ import router from "./routes/routes.js"
 import userRouter from "./routes/userRoutes.js"
 import roomRouter from "./routes/roomRoutes.js"
 import programmeRouter from "./routes/programmeRoutes.js"
-
+import ticketRouter from "./routes/ticketRouter.js"
 
 dotenv.config()
 
@@ -45,6 +45,7 @@ app.use(express.json());
 app.use("/api/users", userRouter)
 app.use("/api/programmes", programmeRouter)
 app.use("/api/rooms", roomRouter)
+app.use("/api/tickets", ticketRouter)
 
 
 // app.get("/programme", async function (request, response) {
@@ -81,3 +82,43 @@ app.listen(8000, function () {
 
 // ./api/users
 // ./api/programme/:id
+
+
+// POST {{url}}/api/programmes/
+// {
+//     "movied"
+//     "date" : "645804cd9bbe2826034dbaab",
+//     "room" :
+// }
+
+
+// POST {{url}}/api/programmes/addSeanse
+// {
+//   "date": "2023-06-15T08:30:00.000+00:00",
+//    "room": "648b480816790d34c966f4a8",
+//    "starttime" : "2023-06-15T08:30:00.000+00:00",
+//    "endtime": "2023-06-15T08:30:00.000+00:00",
+//    "is3d": false,
+//    "movieid": "645804cd9bbe2826034dbaa6"
+// }
+
+// POST {{url}}/api/programmes/addProgramme
+// {
+//     "starttime": "2023-06-20T08:30:00.000+00:00",
+//     "endtime": "2023-06-27T08:30:00.000+00:00"
+// }
+
+
+// POST {{url}}/api/users/addUser
+// {
+//   "name": "tomasz",
+//   "email":"Jtom@garek",
+//   "surname": "Tom"
+// } Lub również password (przy rejestracji)
+
+// POST {{url}}/api/rooms/room
+//  {
+//         "number": 8,
+//         "rows": 4,
+//         "cols": 8
+// }

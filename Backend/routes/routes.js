@@ -27,13 +27,5 @@ router.post("/addUser", testUserPost)
 // });
 
 
-// {
-//   "date": "2023-06-15T08:30:00.000+00:00",
-//     "room": "648b480816790d34c966f4a8",
-//       "starttime" : "2023-06-15T08:30:00.000+00:00",
-//         "endtime": "2023-06-15T08:30:00.000+00:00",
-//           "is3d": false,
-//             "movieid": "645804cd9bbe2826034dbaa6"
-// }
 
 export default router;

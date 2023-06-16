@@ -131,14 +131,15 @@ const addSeanceTest = async (req, res) => { //date, room (id), starttime, endtim
     // });
 
     //checking if movie exists
-    const movie = await Movie.findById(new ObjectId(req.body.movieid));
+    console.log("BEFORE MOVIE ")
+    // const movie = await Movie.findById(new ObjectId(req.body.movieid));
+    // if (!movie) {
+    //   throw new Exception("Movie doesn't exist");
+    // }
 
-    if (!movie) {
-      throw new Exception("Movie doesn't exist");
-    }
-
+    console.log("Creating seance ")
     const seance = {
-      movieid: movieId, //todo: check if movie exists - done
+      movieid: req.body.movieid, //todo: check if movie exists - done
       "3d": req.body.is3d,
       room: new ObjectId(req.body.room),
       starttime: starttime,

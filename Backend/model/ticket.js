@@ -7,27 +7,15 @@ const dataSchema = new mongoose.Schema({
     type: ObjectId,
     required: true
   },
-  userId: {
+  userid: {
     type: ObjectId,
     required: true
   },
-  programmeId: {
+  programmeid: {
     type: ObjectId,
     required: true
   },
   price: {
-    type: Number,
-    required: true
-  },
-  room: {
-    type: ObjectId,
-    required: true
-  },
-  row: {
-    type: Number,
-    required: true
-  },
-  seat: {
     type: Number,
     required: true
   },
@@ -37,15 +25,38 @@ const dataSchema = new mongoose.Schema({
     ,
     required: true
   },
-  "3d": {
-    type: Boolean,
-    required: true
-  },
-  date: {
+  buydate: {
     type: Date,
     default: Date.now
+  },
+  movieinfo: {
+    moviename: {
+      required: true,
+      type: String
+    },
+    moviedate: {
+      required: true,
+      type: Date
+    },
+    "3d": {
+      type: Boolean,
+      required: true
+    },
+    seatinfo: {
+      room: {
+        type: ObjectId,
+        required: true
+      },
+      row: {
+        type: Number,
+        required: true
+      },
+      seat: {
+        type: Number,
+        required: true
+      }
+    }
   }
-
 
 }
 )

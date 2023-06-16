@@ -1,7 +1,7 @@
 import mongoose, { mongo } from "mongoose";
 
 const dataSchema = new mongoose.Schema({
-  imdbID: {
+  imdbId: {
     required: true,
     type: String
   },
@@ -9,7 +9,7 @@ const dataSchema = new mongoose.Schema({
     required: true,
     type: String
   },
-  releseDate: {
+  releaseDate: {
     required: true,
     type: String
   },
@@ -24,7 +24,7 @@ const dataSchema = new mongoose.Schema({
     type: String
   },
   backdrops: [String]
-}, { collation: 'Movies' }
+}, { collection: 'Movies' }
 )
 
 

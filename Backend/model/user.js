@@ -22,7 +22,8 @@ const dataSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  tickets: [userTicket]
+  // tickets: [userTicket]
+  tickets: []
 },
   { collection: 'Users' }
 )
