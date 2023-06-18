@@ -3,12 +3,14 @@ import React from 'react'
 const Test = () => {
 
     const getProgramme = () => {
-        fetch("127.0.0.1:8000/programme", {
+        fetch("http://127.0.0.1:8000/api/movies/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then( response => console.log(response));
+        }).then(response => response.json()) // Parse the response body as JSON
+        .then(data => console.log(data)) // Log the response data
+        .catch(error => console.error(error));
     }
 
     const getSeats = () => {
@@ -34,4 +36,4 @@ const Test = () => {
   )
 }
 
-export default Test
+export default Test;

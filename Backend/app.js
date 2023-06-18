@@ -9,6 +9,9 @@ import userRouter from "./routes/userRoutes.js"
 import roomRouter from "./routes/roomRoutes.js"
 import programmeRouter from "./routes/programmeRoutes.js"
 import ticketRouter from "./routes/ticketRouter.js"
+import moviesRouter from "./routes/moviesRoutes.js"
+
+import cors from 'cors';
 
 dotenv.config()
 
@@ -33,6 +36,7 @@ database.once("connected", () => {
 });
 
 const app = express();
+app.use(cors());
 // app.locals.pretty = app.get("env") === "development"; // The resulting HTML code will be indented in the development environment
 /* ************************************************ */
 // app.use(morgan("dev"));
@@ -46,6 +50,7 @@ app.use("/api/users", userRouter)
 app.use("/api/programmes", programmeRouter)
 app.use("/api/rooms", roomRouter)
 app.use("/api/tickets", ticketRouter)
+app.use("/api/movies", moviesRouter)
 
 
 // app.get("/programme", async function (request, response) {
