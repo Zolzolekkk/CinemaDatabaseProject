@@ -1,14 +1,26 @@
-import Programme from "../model/programme.js"
-import Movie from "../model/movie.js"
-import Room from "../model/room.js"
-import User from "../model/user.js"
+import Programme from "../model/programme.js";
+import Movie from "../model/movie.js";
+import Room from "../model/room.js";
+import User from "../model/user.js";
 import mongoose from "mongoose";
-import { ObjectId } from "mongoose"
+import { ObjectId } from "mongoose";
 
+const dayNames = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
+
+const getDayName = (number) =>
+  number !== 0 ? dayNames[number - 1] : "sunday";
 
 //tod: controllerPrices
-const testAddTicket = async (req, res) => { //seanceid, normalny czy ulgowy (type), email, dzień tygodnia/data dnia tygodnia filmu (date), row, col, price, is3d
-  // console.log(req.body)
+const testAddTicket = async (req, res) => {
+  //seanceid, normalny czy ulgowy (type), email, dzień tygodnia/data dnia tygodnia filmu (date), row, col, price, is3d
   const ObjectId = mongoose.Types.ObjectId;
   //todo: klient podaje maila, nawet jak ma hasło to i tak podpinamy pod jego maila w bazie (zmienić to)
   try {
@@ -16,159 +28,152 @@ const testAddTicket = async (req, res) => { //seanceid, normalny czy ulgowy (typ
     const date = new Date(req.body.date);
     const programme = await Programme.findOne({
       starttime: { $lte: date },
-      endtime: { $gte: date }
-    })
+      endtime: { $gte: date },
+    });
 
-    
-
-    console.log(`programme:${programme}`)
     if (!programme) {
-      throw new Error("Programme doesn't exist");
+      throw new Error(
+        "Programme doesn't exist at given date"
+      );
     }
-    
+    await Programme.populateQuery(programme);
     let user;
+    let ticket;
     //user actions
-    if (req.body.email) { // niezalogowany, sprawdzić bazę
-        console.log(req.body)
-        const email = req.body.email;
-        user = await User.findOne({ email: email }) 
-        console.log(user)
-        if (user) { //użytkownik w bazie, sprawdź, czy jest zarejestrowany  
-          if (user.password) { //zarejestrowany, a nie zalogowany, zaloguj się
-                throw new Error("To buy a ticket please enter your password");
-            }
-            else { //get userid
-                const userid = user._id;
-            }
+    if (req.body.email) {
+      // niezalogowany, sprawdzić bazę
+      const email = req.body.email;
+      user = await User.findOne({ email: email });
+      console.log(user);
+      if (user) {
+        //użytkownik w bazie, sprawdź, czy jest zarejestrowany
+        if (user.password) {
+          //zarejestrowany, a nie zalogowany, zaloguj się
+          throw new Error("To buy a ticket please login");
+        } else {
+          //get userid
+          const userid = user._id;
         }
-        else { //nie ma użytkownika, dodaj nowego
-                const data = new User({
-                    email: email,
-                    name: req.body.name,
-                    surname: req.body.surname,
-                    password: null,
-                    admin: false,
-                    tickets: []
-                })
-                user = await data.save();
-                const userid = user._id;
-        }
-    }
-    else if (req.body.userid) { //użytkownik zalogowany
-        user = await User.findById(new ObjectId(req.body.userid));
-        if (!user) {
-            throw new Error("User doesn't exist");
-        }
-        const userid = req.body.userid;
-        const email = user.email;
-    }
-    else {
-        throw new Error("Sth went wrong");
+      } else {
+        //nie ma użytkownika, dodaj nowego
+        const data = new User({
+          email: email,
+          name: req.body.name,
+          surname: req.body.surname,
+          password: null,
+          admin: false,
+          tickets: [],
+        });
+        user = await data.save();
+        const userid = user._id;
+      }
+    } else if (req.body.userid) {
+      //użytkownik zalogowany
+      user = await User.findById(
+        new ObjectId(req.body.userid)
+      );
+      if (!user) {
+        throw new Error("User doesn't exist");
+      }
+      const userid = req.body.userid;
+      const email = user.email;
+    } else {
+      throw new Error(
+        "Neither userid nor email provided, cannot anonimous buy ticket"
+      );
     }
 
-  
-    var dayNames = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-    const day = date.getDay();
-    const seanses = programme.days[dayNames[day]].seanses;
-    console.log(seanses)
-    let seanseFound = null
-    for ( let seanse of seanses  ){
+    const day = getDayName(date.getUTCDay());
+    const seanses = programme.days[day].seanses;
+    let seanseFound = null;
+    for (let seanse of seanses) {
       if (seanse._id.equals(req.body.seanseid)) {
-            console.log("We got seanse")
-            seanseFound = seanse
-            break;
-        }
+        seanseFound = seanse;
+        break;
+      }
     }
     if (!seanseFound) {
-        throw new Error("Seanse doesn't exist")
+      throw new Error("Seanse doesn't exist");
     }
-    const movie = await Movie.findById(seanseFound.movieid)
-    const room = await Room.findById(seanseFound.room)
-    // console.log(movie)
-    // console.log(room)
-    // console.log(seanseFound) 
+    const movie = seanseFound.movieid;
+    const room = seanseFound.room;
     const moviedate = seanseFound.starttime;
     const moviename = movie.title;
+    const is3d = seanseFound['3d'];
+    // const is3d = req.body.is3d;
     const roomnumber = room.number;
-    
     const row = req.body.row;
     const col = req.body.col;
-    const colCount = room.cols
-    const seatnumber = row * colCount + col;
-    console.log(seatnumber);
+    const colCount = room.cols;
+    // const seatnumber = row * colCount + col;
+
 
     if (!seanseFound.seats[row]) {
-        throw new Error("This row doesn't exist");
+      throw new Error(`Row number ${row} doesn't exist`);
     }
 
-    if (!seanseFound.seats[row].seats[col]) { 
-        throw new Error("This col doesn't exist");
+    if (!seanseFound.seats[row].seats[col]) {
+      throw new Error(
+        `Col number ${col} doesn't exist in row number ${row}`
+      );
+    }
+    const seatnumber = seanseFound.seats[row].seats[col].number;
+
+    // if (
+    //   seanseFound.seats[row].seats[col].number != seatnumber
+    // ) {
+    //   throw new Error("Invalid seatnumber");
+    // }
+
+    if (seanseFound.seats[row].seats[col].availability == false) {
+      throw new Error(
+        "This place isn't available, choose another one"
+      );
     }
 
-    if (seanseFound.seats[row].seats[col].number != seatnumber) { 
-        throw new Error("Invalid seatnumber");
+    //update availability
+    seanseFound.seats[row].seats[col].availability = false;
+    await programme.save();
+    //add ticket in both places using transactions
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      ticket = {
+        id: new mongoose.Types.ObjectId(),
+        userid: user._id,
+        programmeid: programme._id,
+        price: req.body.price,
+        type: req.body.type,
+        movieinfo: {
+          moviename: moviename,
+          moviedate: moviedate,
+          "3d": is3d,
+          seatinfo: {
+            room: roomnumber,
+            row: row,
+            seat: seatnumber,
+          },
+        },
+      };
+      seanseFound.tickets.push(ticket);
+      user.tickets.push(ticket);
+      await user.save();
+      await programme.save();
+      await session.commitTransaction();
+      session.endSession();
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      seanseFound.seats[row].seats[col].availability = true;
+      await programme.save();
     }
-
-    if (seanseFound.seats[row].seats[col].availability == true) {
-        //update availability 
-        seanseFound.seats[row].seats[col].availability = false;
-        await programme.save();
-        console.log(`User : ${user}`)
-        //add ticket in both places using transactions
-        const session = await mongoose.startSession();
-        session.startTransaction();
-        try {
-          console.log(req.body)
-            const ticket = {
-              id: new mongoose.Types.ObjectId(),
-                userid: user._id, 
-                programmeid: programme._id,
-                price: req.body.price,
-                type: req.body.type,
-                movieinfo: {
-                    moviename: moviename, 
-                    moviedate: moviedate,
-                    "3d": req.body.is3d,
-                    seatinfo: {
-                        room: roomnumber, 
-                        row: row,
-                        seat: seatnumber
-                      }
-                }
-            };
-            console.log(`User : ${user}`)
-            console.log(`Current tickets: ${seanseFound.tickets}`)
-            seanseFound.tickets.push(ticket);
-            user.tickets.push(ticket);
-            await user.save();
-            await programme.save();
-            await session.commitTransaction(); 
-            session.endSession();
-        }
-        catch (error) {
-          console.log("Sesja nie udala sie ")
-            await session.abortTransaction();
-            session.endSession();
-            seanseFound.seats[row].seats[col].availability = true;
-            await programme.save();
-        }
-        
-    }
-    else {
-        throw new Error("This place isn't available, choose another one");
-    }
-
-    
-    // res.status(200).json({ message: "Everything fine" })
-    console.log("Object to be sent ...")
-    const seanseWithRoomAndMovie = { ...seanseFound, movieid: movie, room: room }
-    res.status(200).json(seanseWithRoomandMovie)
+    res.status(200).json({ ticket: ticket });
   } catch (err) {
-    res.status(400).json({ message: err.message })
+    res.status(400).json({ message: err.message });
   }
-}
+};
 
-export {testAddTicket}
+export { testAddTicket };
 
 // najpierw sprawdzić, czy dany program i seans istnieją
 // *sprawdzić, czy user o podanym mailu istnieje (zapamiętujemy jego UserId)
@@ -190,54 +195,5 @@ export {testAddTicket}
 // jezeli gosciu chce kupic bilet przez formularz dla niezalogowanych, to jezeli ma juz konto, zwracamy eror i informacje ze juz ma konto,
 // wiec prosze sie zalogowac ?
 
-// {
-  // uderid: 
-  // .//
-// }
-
-// {
-// email: 
-// }
 
 
-
-// id: {
-//   type: ObjectId,
-//   },
-// userId: {
-//   type: ObjectId,
-// },
-// programmeId: {
-//   type: ObjectId,
-// },
-// price: {
-//   type: Number,
-// },
-// room: {
-//   type: ObjectId,
-// },
-// row: {
-//   type: Number,
-// },
-// seat: {
-//   type: Number,
-// },
-// type: {
-//   type: String,
-//     enum: ['student', 'normal']
-// },
-// "3d": {
-//   type: Boolean,
-// },
-// buydate: {
-//   type: Date,
-//     default: Date.now
-// },
-// moviename: {
-//   required: true,
-//     type: String
-// },
-// moviedate: {
-//   required: true,
-//     type: Date
-// }
