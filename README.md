@@ -56,7 +56,6 @@ Po stronie backendu zrealizowaliśmy podstawowe funkcje potrzebne do obsługi ap
 
 ```javascript
 const getUserTickets = async (req, res) => {
-  //userid
   const ObjectId = mongoose.Types.ObjectId;
   try {
     const user = await User.findById(
@@ -65,7 +64,6 @@ const getUserTickets = async (req, res) => {
     if (!user) {
       throw new Error("User of given Id does not exist");
     }
-    // console.log(user.tickets);
     res.status(200).json({ tickets: user.tickets });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -73,12 +71,11 @@ const getUserTickets = async (req, res) => {
 };
 ```
 
-**Widok zwracająca program obowiązujący dla danej daty z uzupełnionymi referencjami na movieid oraz room**
+**Widok zwracająca program obowiązujący dla danej daty z uzupełnionymi referencjami na movieid oraz room**\
 Po upewnieniu się, że program istnieje wykonujemy zapytanie i uzupełniamy referencje odpowiednimi obiektami
 
 ```javascript
 const getSeancesOfTheWeek = async (req, res) => {
-  //przesłać current date and current date + 7days
   const date = new Date(req.body.date);
   try {
     const programme = await Programme.findOne({
@@ -96,7 +93,7 @@ const getSeancesOfTheWeek = async (req, res) => {
 };
 ```
 
-**Widok repertuaru na x zadanych tygodni**
+**Widok repertuaru na x zadanych tygodni**\
 Widok repertuaru na x następnych tygodni (x ustalone po stornie backendu).
 W zwracanych obiektach referencje są zastąpione obiekatmi odpowiedniego filmu i pokoju, więc aplikacja dostaje pełen zestaw danych o danym repertuarze.
 
@@ -105,7 +102,6 @@ const getProgrammeForXWeeksAheadPopulated = async (
   req,
   res
 ) => {
-  //przesłać current date and current date + 7days
   const date = new Date();
   try {
     const programmes = await Programme.find({
@@ -124,7 +120,7 @@ const getProgrammeForXWeeksAheadPopulated = async (
 };
 ```
 
-**Widok listy pokojów w naszym kinie**
+**Widok listy pokojów w naszym kinie**\
 Zapytanie zwraca listę sal kinowych w naszym kinie
 
 ```javascript
@@ -167,7 +163,6 @@ const checkPotentialOverlap = (
 
 ```javascript
 const addSeanse = async (req, res) => {
-  //date, room (id), starttime, endtime, is3d, movieid
   try {
     const ObjectId = mongoose.Types.ObjectId;
     const date = new Date(req.body.date);
@@ -247,9 +242,7 @@ upewniając się wcześniej, że w danym przedziale czasowym nie ma jeszce obowi
 
 ```javascript
 const addProgramme = async (req, res) => {
-  //to do: czy seanse na siebie nie nachodzą w danym roomie i w danych tygodniach
-  //todo: czy to jest tydzień, czyli od ponedziałku do niedzieli
-  const starttime = new Date(req.body.starttime); //todo: sprawdzić czy od poniedziałku do niedzieli
+  const starttime = new Date(req.body.starttime);
   const endtime = new Date(req.body.endtime);
   starttime.setUTCHours(0, 0, 0, 0);
   endtime.setUTCHours(23, 59, 59, 999);
