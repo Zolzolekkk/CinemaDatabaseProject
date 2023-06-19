@@ -61,6 +61,5 @@ const dataSchema = new mongoose.Schema({
 }
 )
 
-
 // export { dataSchema as userTicket }
 export default dataSchema
