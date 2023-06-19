@@ -1,17 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faVideoSlash } from "@fortawesome/free-solid-svg-icons";
+import { faVideo } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container"
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
     return (
         <Navbar bg="dark" variant="dark" expand="lg">
             <Container fluid>
                 <Navbar.Brand href="/" style={{"color":'gold'}}>
-                    <FontAwesomeIcon icon ={faVideoSlash}/>Gold
+                    <FontAwesomeIcon icon ={faVideo} style={{paddingRight: '10px'}}/>CinemaDB
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
@@ -24,8 +25,8 @@ const Header = () => {
                         {/* <NavLink className ="nav-link" to="/watchList">Watch List</NavLink>    */}
                         <NavLink className ="nav-link" to="/programme">Programme</NavLink>   
                     </Nav>
-                    <Button variant="outline-info" className="me-2">Login</Button>
-                    <Button variant="outline-info">Register</Button>
+                    <Button variant="outline-info" className="me-2" onClick={() => navigate('/login')} >Login</Button>
+                    <Button variant="outline-info" onClick={() => navigate("/register")}>Register</Button>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

@@ -9,6 +9,8 @@ import Header from './components/Header';
 import Trailer from './components/Trailer';
 import ProgrammeView from './components/ProgrammeView';
 import SeanseView from './components/SeanseView';
+import LoginView from './components/LoginView';
+import RegisterView from './components/RegisterView';
 
 function App() {
 
@@ -17,7 +19,7 @@ function App() {
   const getMovies = async () => { // todo
     try {
       const response = await api.get("movies/");
-      console.log(response.data.movies);
+      // console.log(response.data.movies);
       setMovies(response.data.movies);
     } catch (error) {
       console.log(error);
@@ -38,6 +40,8 @@ function App() {
             <Route path="/Trailer/:ytTrailerId" element={<Trailer/>}></Route>
             <Route path="/programme" element={<ProgrammeView movies={movies}/>}></Route>
             <Route path="/seanse/:seanseId" element={<SeanseView/>}></Route> {/*todo*/}
+            <Route path="/login" element={<LoginView/>}></Route>
+            <Route path="/register" element={<RegisterView/>}></Route>
             {/* <Route path="/Reviews/:movieId" element ={<Reviews getMovieData = {getMovieData} movie={movie} reviews ={reviews} setReviews = {setReviews} />}></Route> */}
             {/* <Route path="*" element = {<NotFound/>}></Route> */}
           </Route>

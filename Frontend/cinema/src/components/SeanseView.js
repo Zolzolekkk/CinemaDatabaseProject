@@ -32,10 +32,10 @@ const SeanseView = (seanse) => {
   ];
 
   return (
-    <div>
+    <div className="seanse-view-container">
       <table
         className="ticketTable"
-        cellspacing="0"
+        cellSpacing="0"
         rules="all"
         border="0"
         id="TicketsSelection"
@@ -58,10 +58,7 @@ const SeanseView = (seanse) => {
             <td>
               <span id="lblPrice">25.90 zł</span>
             </td>
-            <td>
-              <span id="lblServiceCharge">2.00 zł</span>
-            </td>
-            <td>
+            <td className="select-td">
               <select
                 name="ctl00$CPH1$SelectTicketControl$TicketsSelection$ctl02$ddQunatity"
                 id="ddQunatity_0"
@@ -105,7 +102,7 @@ const SeanseView = (seanse) => {
               </select>
             </td>
           </tr>
-          <tr class="TT_2">
+          <tr className="TT_2">
             <td>
               <div className="type-ticket">
                 <span id="lblTicketName">Student 2D</span>
@@ -114,10 +111,7 @@ const SeanseView = (seanse) => {
             <td>
               <span id="lblPrice">21.90 zł</span>
             </td>
-            <td>
-              <span id="lblServiceCharge">2.00 zł</span>
-            </td>
-            <td>
+            <td className="select-td">
               <select
                 name="ctl00$CPH1$SelectTicketControl$TicketsSelection$ctl03$ddQunatity"
                 id="ddQunatity_1"
@@ -164,7 +158,7 @@ const SeanseView = (seanse) => {
         </tbody>
       </table>
       {normalTickets + studentTickets > 0 ? <div>
-        <SeatsGrid rows={12} columns={10}/>
+        <SeatsGrid rows={12} columns={10} noTickets={normalTickets + studentTickets}/>
       </div> : null}
     </div>
   );
