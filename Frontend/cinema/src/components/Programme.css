@@ -1,10 +1,11 @@
 .movie {
     display: flex;
-    margin-bottom: 20px;
+    width: 60vw;
+    margin-top: 40px;
   }
   
   .poster {
-    height: 125px;
+    height: 250px;
     object-fit: cover;
     margin-right: 20px;
   }
@@ -15,7 +16,7 @@
   }
   
   .title {
-    font-size: 20px;
+    font-size: 32px;
     font-weight: bold;
     margin-bottom: 10px;
   }
@@ -26,7 +27,7 @@
   
   .format {
     font-style: italic;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
   
   .showtime-button {
