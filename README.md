@@ -22,7 +22,7 @@ Kolekcja **Movies** zawiera podstawowe informacje o filmach puszczanych w naszym
 
 ## Programme
 
-Kolekcja **Programme** jest najbardziej rozbudowaną strukturą w naszej bazie. Każdy dokument reprezentuję repertuar na dany tydzień. Zawiera on początek i koniec danego tygodnia oraz obiekt **days** składający się z 7 dni tygodnia. Każdy dzień tygodnia zawiera tablicę **seansów**. Każdy **seans** zawiera podstawowe dane, takie jak **movieid** wskazujący na puszczany wtedy film, początek i koniec seansu oraz macierzy miejsc sygnalizujacych zajęcie miejsca i tablicy kupionych biletów.
+Kolekcja **Programme** jest najbardziej rozbudowaną strukturą w naszej bazie. Każdy dokument reprezentuję repertuar na dany tydzień. Zawiera on początek i koniec danego tygodnia oraz obiekt **days** składający się z 7 dni tygodnia. Każdy dzień tygodnia zawiera tablicę **seansów**. Każdy **seans** zawiera podstawowe dane, takie jak **movieid** wskazujący na puszczany wtedy film, początek i koniec seansu, macierz miejsc sygnalizujacych dostępność miejsc oraz tablice biletów kupionych na dany seans.
 
 <!-- ss do poprawy -->
 
@@ -30,7 +30,7 @@ Kolekcja **Programme** jest najbardziej rozbudowaną strukturą w naszej bazie. 
 
 ## Users
 
-Kolekcja **Users** zawiera informację o użytkownikach, którzy stworzyli konto podczas zakupu biletu. Każdy dokument zawiera podstawowe informacje o użytkowniku takie jak: imię, nazwisko, e-mail, zakodowane hasło, rola oraz tablica biletów. **Bilet** trzymany w userze jest identyczny co ten trzymany w seansie. Składa się on z kluczy obcych do usera oraz seansu, ceny, typu, miejsca oraz zawiera podstawowe informacje o filmie na który został on zakupiony.
+Kolekcja **Users** zawiera informację o użytkownikach, zarówno zarejestrowanych na stronie naszego kina, jak tych co kupowali bilety jedynie przy użyciu emaila (bez rejestracji). Każdy dokument zawiera podstawowe informacje o użytkowniku takie jak: imię, nazwisko, e-mail, zahashowane hasło, rola oraz tablica biletów. **Bilet** trzymany w userze jest identyczny jak ten trzymany w seansie. Składa się on z kluczy obcych do usera oraz seansu, ceny, typu, miejsca oraz zawiera podstawowe informacje o filmie na który został on zakupiony.
 
 ![Users Document](Documentation/user-doc.png)
 
@@ -48,11 +48,11 @@ W kolekcji **Prices** trzymamy ceny biletów normalnych i ulgowych, zarówno dla
 
 # Backend
 
-Po stronie backendu zrealizowaliśmy podstawowe funkcje potrzebne do obsługi aplikacji kina. Poniżej zamieściliśmy przykładowe funkcjonalności które zrealizowaliśmy.
+Po stronie backendu zrealizowaliśmy podstawowe funkcje potrzebne do obsługi aplikacji kina. Poniżej zamieściliśmy przykładowe funkcjonalności, które zrealizowaliśmy.
 
 ## Widoki
 
-**Widok biletów użytkownika**
+**Widok biletów użytkownika**\
 
 ```javascript
 const getUserTickets = async (req, res) => {
@@ -140,7 +140,7 @@ Podczas implementacji korzystaliśmy z biblioteki mongoose do modelowania warunk
 Poza walidacją mongoose dostarczył nam wiele funkcjonalności upraszczających operacje na bazie mongodb oraz funkcjonalności implementacyjne jak na przykład
 modele oraz metody statyczne na modelach.
 
-**Procedura dodania nowego seansu**
+**Procedura dodania nowego seansu**\
 Upewniamy się o istnieniu programu w danym przedziale czasowym, sprawdzamy czy pokój nie jest okupowany danego dnia o
 konkretnych godzinach oraz czy istnieje movie o podanym id
 
@@ -236,7 +236,7 @@ const addSeanse = async (req, res) => {
 };
 ```
 
-**Procedura dodania nowego programu**
+**Procedura dodania nowego programu**\
 Upewniamy się, że program zaczyna się w poniedziałek oraz kończy w niedziele (zerujemy godziny w datach żeby objąć cały tydzień),
 upewniając się wcześniej, że w danym przedziale czasowym nie ma jeszce obowiązującego programu
 
@@ -319,7 +319,7 @@ const addProgramme = async (req, res) => {
 };
 ```
 
-**Rejestracja nowego użytkownika**
+**Rejestracja nowego użytkownika**\
 Upewniamy się, czy dany email nie figuruje już w naszej bazie, sprawdzamy, czy dostaliśmy wszystkie dane potrzebne
 do rejestracji, jeśli wszystko się zgadza dodajemy nowego użytkwnia o bazy.
 
@@ -365,7 +365,7 @@ const registerUser = async (req, res) => {
 };
 ```
 
-**Procedura logowania użytkownika**
+**Procedura logowania użytkownika**\
 Kontrola poprawności zahashowanego hasła i podanego przy logowaniu emaila oraz wysłanie informacji zwrotnej do frontendu
 
 ```javascript
@@ -402,7 +402,7 @@ const loginUser = async (req, res) => {
 };
 ```
 
-**Dodawanie pokoju**
+**Dodawanie pokoju**\
 Dodawanie pokoju o zadanych parametrach (rows, cols) i numerze, po uwczesnym upewnieniu się, że w naszym kinie nie ma już sali o takim numerze
 
 ```javascript
@@ -425,7 +425,7 @@ const addRoom = async (req, res) => {
 };
 ```
 
-**Procedura dodania biletu**
+**Procedura dodania biletu**\
 Jest to dosyć duża obszernościwo prcedura, więc zaprezentujemy tutaj jej urywki.
 
 W celu zwracania odpowiedniej odpowiedzi do frontendu zamiast movieid/roomid w danym miejscu dodajemy cały model dzięki populate.
