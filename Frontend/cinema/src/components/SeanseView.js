@@ -4,10 +4,12 @@ import SeatsGrid from "./SeatsGrid";
 import { useParams } from 'react-router-dom';
 import api from "../api/axiosConfig";
 
-const SeanseView = ({programme, user}) => {
+const SeanseView = ({user}) => {
   const [normalTickets, setNormalTickets] = useState(0);
   const [studentTickets, setStudentTickets] = useState(0);
   const [prices, setPrices] = useState(null);
+  const [programme, setProgramme] = useState(null);
+  const [seanse, setSeanse] = useState(null);
 
   const { seanseID } = useParams();
   const cleanedID = seanseID.replace(/[:}]/g, "");
@@ -20,6 +22,19 @@ const SeanseView = ({programme, user}) => {
     });
   }
 
+  const getProgramme = async () => {
+    try {
+      const response = await api.get("programmes/getProgrammesWeekly");
+      const seansesByDay = response.data.programmes.map((item) =>
+        Object.entries(item.days).map(([day, { seanses }]) => seanses)
+      );
+      setProgramme(seansesByDay.flat());
+      setSeanse(seansesByDay.flat().flat().find((seanse) => seanse._id === cleanedID));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleNormalTicketChange = (event) => {
     const quantity = parseInt(event.target.value);
     setNormalTickets(quantity);
@@ -31,14 +46,12 @@ const SeanseView = ({programme, user}) => {
   };
 
   useEffect(() => {
+    getProgramme();
     getPrices();
   }, []);
 
-  const seanse = programme.flat().find((seanse) => seanse._id === cleanedID);
-
   return (
     <div className="seanse-view-container">
-      {console.log(seanse)}
       <table
         className="ticketTable"
         cellSpacing="0"
@@ -48,7 +61,6 @@ const SeanseView = ({programme, user}) => {
         style={{ borderWidth: "0px", borderCollapse: "collapse" }}
       >
         <tbody>
-          {console.log(seanse)}
           <tr className="header">
             <th scope="col">Type</th>
             <th className="TicketsSelectionPriceHeader" scope="col">

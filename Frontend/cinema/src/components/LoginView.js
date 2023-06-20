@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import "./LoginView.css";
 import api from "../api/axiosConfig";
-import {useNavigate} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const LoginView = ({user, setUser}) => {
+const LoginView = ({ user, setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { seanseID } = useParams();
 
   const navigate = useNavigate();
 
@@ -26,8 +28,12 @@ const LoginView = ({user, setUser}) => {
         .then((response) => {
           // console.log(response.data.user);
           if (response.status == 200) {
-            setUser(response.data.user);
-            navigate("/");
+            if (seanseID) {
+              navigate(`/seanse/${seanseID.replace(/[:}]/g, "")}`);
+            } else {
+              setUser(response.data.user);
+              navigate("/");
+            }
           } else {
             alert("Login failed");
           }
