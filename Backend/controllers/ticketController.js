@@ -15,6 +15,8 @@ const dayNames = [
   "sunday",
 ];
 
+// seats: [{row: , col, type: , price: }]
+
 const getDayName = (number) =>
   number !== 0 ? dayNames[number - 1] : "sunday";
 
@@ -101,78 +103,86 @@ const testAddTicket = async (req, res) => {
     const moviename = movie.title;
     const is3d = seanseFound['3d'];
     const seanseid = seanseFound._id;
-    // const is3d = req.body.is3d;
     const roomnumber = room.number;
-    const row = req.body.row;
-    const col = req.body.col;
     const colCount = room.cols;
+    // const is3d = req.body.is3d;
+
+    // const roomnumber = room.number;
+    // const row = req.body.row;
+    // const col = req.body.col;
+    // const colCount = room.cols;
+
     // const seatnumber = row * colCount + col;
+    for (let ticketCandidate of req.body.seats) {
+      let row = ticketCandidate.row;
+      let col = ticketCandidate.col;
 
+      if (!seanseFound.seats[row]) {
+        throw new Error(`Row number ${row} doesn't exist`);
+      }
 
-    if (!seanseFound.seats[row]) {
-      throw new Error(`Row number ${row} doesn't exist`);
+      if (!seanseFound.seats[row].seats[col]) {
+        throw new Error(
+          `Col number ${col} doesn't exist in row number ${row}`
+        );
+      }
+      // const seatnumber = seanseFound.seats[row].seats[col].number;
+
+      if (seanseFound.seats[row].seats[col].availability == false) {
+        throw new Error(
+          `Place in row: ${row} and col ${col} already taken, choose another one`
+        );
+      }
     }
 
-    if (!seanseFound.seats[row].seats[col]) {
-      throw new Error(
-        `Col number ${col} doesn't exist in row number ${row}`
-      );
-    }
-    const seatnumber = seanseFound.seats[row].seats[col].number;
 
-    // if (
-    //   seanseFound.seats[row].seats[col].number != seatnumber
-    // ) {
-    //   throw new Error("Invalid seatnumber");
-    // }
-
-    console.log(row);
-    console.log(col);
-    console.log(seanseFound.seats[row].seats[col].availability);
-    if (seanseFound.seats[row].seats[col].availability == false) {
-      throw new Error(
-        "This place isn't available, choose another one"
-      );
-    }
 
     //update availability
-    seanseFound.seats[row].seats[col].availability = false;
-    await programme.save();
+
+    // await programme.save();
+    // seanseFound.seats[row].seats[col].availability = false;
+    const tickets = []
     //add ticket in both places using transactions
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      ticket = {
-        id: new mongoose.Types.ObjectId(),
-        userid: user._id,
-        programmeid: programme._id,
-        seanseid: seanseid,
-        price: req.body.price,
-        type: req.body.type,
-        movieinfo: {
-          moviename: moviename,
-          moviedate: moviedate,
-          "3d": is3d,
-          seatinfo: {
-            room: roomnumber,
-            row: row,
-            seat: seatnumber,
+      for (let ticketCandidate of req.body.seats) {
+        let seatnumber = ticketCandidate.row * colCount + ticketCandidate.col;
+        seanseFound.seats[ticketCandidate.row].seats[ticketCandidate.col].availability = false;
+        let ticket = {
+          id: new mongoose.Types.ObjectId(),
+          userid: user._id,
+          programmeid: programme._id,
+          seanseid: seanseid,
+          price: ticketCandidate.price,
+          type: ticketCandidate.type,
+          movieinfo: {
+            moviename: moviename,
+            moviedate: moviedate,
+            "3d": is3d,
+            seatinfo: {
+              room: roomnumber,
+              row: ticketCandidate.row,
+              seat: seatnumber,
+            },
           },
-        },
-      };
-      seanseFound.tickets.push(ticket);
-      user.tickets.push(ticket);
-      await user.save();
-      await programme.save();
+        };
+        seanseFound.tickets.push(ticket);
+        user.tickets.push(ticket);
+        tickets.push(ticket)
+      }
+
+      await user.save({ session });
+      await programme.save({ session });
       await session.commitTransaction();
       session.endSession();
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
-      seanseFound.seats[row].seats[col].availability = true;
-      await programme.save();
+      // seanseFound.seats[row].seats[col].availability = true;
+      // await programme.save({ session });
     }
-    res.status(200).json({ ticket: ticket });
+    res.status(200).json({ tickets: tickets });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
