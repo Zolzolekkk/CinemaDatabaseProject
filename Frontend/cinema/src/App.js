@@ -55,7 +55,7 @@ function App() {
             path="/programme"
             element={<ProgrammeView programme={programme} />}
           ></Route>
-          <Route path="/seanse/:seanseId" element={<SeanseView programme={programme} user={user}/>}></Route>
+          <Route path="/seanse/:seanseID" element={<SeanseView programme={programme} user={user}/>}></Route>
           <Route path="/login" element={<LoginView user={user} setUser={setUser}/>}></Route>
           <Route path="/register" element={<RegisterView />}></Route>
           {/* <Route path="/Reviews/:movieId" element ={<Reviews getMovieData = {getMovieData} movie={movie} reviews ={reviews} setReviews = {setReviews} />}></Route> */}

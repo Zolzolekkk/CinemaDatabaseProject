@@ -1,13 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./SeanseView.css";
 import SeatsGrid from "./SeatsGrid";
 import { useParams } from 'react-router-dom';
+import api from "../api/axiosConfig";
 
 const SeanseView = ({programme, user}) => {
   const [normalTickets, setNormalTickets] = useState(0);
   const [studentTickets, setStudentTickets] = useState(0);
+  const [prices, setPrices] = useState(null);
 
   const { seanseID } = useParams();
+  const cleanedID = seanseID.replace(/[:}]/g, "");
+
+  const getPrices = async () => {
+    await api.get("/price").then((response) => {
+      setPrices(response.data.priceList);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
 
   const handleNormalTicketChange = (event) => {
     const quantity = parseInt(event.target.value);
@@ -19,22 +30,11 @@ const SeanseView = ({programme, user}) => {
     setStudentTickets(quantity);
   };
 
-  const seatsPlaceholder = [
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  ];
+  useEffect(() => {
+    getPrices();
+  }, []);
 
-  const seanse = programme.find((seanse) => seanse._id === seanseID);
+  const seanse = programme.flat().find((seanse) => seanse._id === cleanedID);
 
   return (
     <div className="seanse-view-container">
@@ -48,8 +48,9 @@ const SeanseView = ({programme, user}) => {
         style={{ borderWidth: "0px", borderCollapse: "collapse" }}
       >
         <tbody>
+          {console.log(seanse)}
           <tr className="header">
-            <th scope="col">Rodzaj</th>
+            <th scope="col">Type</th>
             <th className="TicketsSelectionPriceHeader" scope="col">
               Price
             </th>
@@ -58,11 +59,11 @@ const SeanseView = ({programme, user}) => {
           <tr className="TT_1">
             <td>
               <div className="type-ticket">
-                <span id="lblTicketName">Regular 2D</span>
+                <span id="lblTicketName">Regular {seanse ? (seanse['3d'] ? '3D' : '2D') : ''}</span>
               </div>
             </td>
             <td>
-              <span id="lblPrice">25.90 zł</span>
+              <span id="lblPrice">{prices && seanse ? (seanse['3d'] ? prices.normal['3d'].toFixed(2) : prices.normal['2d'].toFixed(2)) : ''} zł</span>
             </td>
             <td className="select-td">
               <select
@@ -111,11 +112,11 @@ const SeanseView = ({programme, user}) => {
           <tr className="TT_2">
             <td>
               <div className="type-ticket">
-                <span id="lblTicketName">Student 2D</span>
+                <span id="lblTicketName">Student {seanse ? (seanse['3d'] ? '3D' : '2D') : ''}</span>
               </div>{" "}
             </td>
             <td>
-              <span id="lblPrice">21.90 zł</span>
+              <span id="lblPrice">{prices && seanse ? (seanse['3d'] ? prices.student['3d'].toFixed(2) : prices.student['2d'].toFixed(2)) : ''} zł</span>
             </td>
             <td className="select-td">
               <select
@@ -164,7 +165,7 @@ const SeanseView = ({programme, user}) => {
         </tbody>
       </table>
       {normalTickets + studentTickets > 0 ? <div>
-        <SeatsGrid seats={seanse[0].seats} noTickets={normalTickets + studentTickets} user={user}/>
+        <SeatsGrid noTickets={normalTickets + studentTickets} user={user} seanse={seanse} noRegularTickets={normalTickets} prices={prices}/>
       </div> : null}
     </div>
   );

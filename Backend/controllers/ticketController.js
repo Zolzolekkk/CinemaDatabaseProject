@@ -126,6 +126,9 @@ const testAddTicket = async (req, res) => {
     //   throw new Error("Invalid seatnumber");
     // }
 
+    console.log(row);
+    console.log(col);
+    console.log(seanseFound.seats[row].seats[col].availability);
     if (seanseFound.seats[row].seats[col].availability == false) {
       throw new Error(
         "This place isn't available, choose another one"

@@ -30,7 +30,7 @@ const Programme = ({ seanses }) => {
               {seanses[0].movieid.genres[0]}, {seanses[0].movieid.genres[1]},{" "}
               {seanses[0].movieid.genres[2]}
             </p>
-            <p className="format">{seanses[0].movieid["3d"] ? "3D" : "2D"}</p>
+            <p className="format">{seanses[0]["3d"] ? "3D" : "2D"}</p>
             <div className="showtimes">
               {seanses.map((seanse) => <button
                 className="showtime-button"

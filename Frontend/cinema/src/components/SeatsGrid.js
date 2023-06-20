@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "./SeatsGrid.css";
+import { useNavigate } from "react-router-dom";
+import api from "../api/axiosConfig";
 
-const SeatsGrid = ({ user, seats, noTickets }) => {
+const SeatsGrid = ({ user, noTickets, noRegularTickets, seanse, prices }) => {
   const [grid, setGrid] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [correctSeats, setCorrectSeats] = useState(true);
 
+  const navigate = useNavigate();
+
   const initializeGrid = () => {
     const initialGrid = [];
-    // console.log(seats);
-    for (let seatRow of seats) {
-      console.log(seatRow);
+    for (let seatRow of seanse.seats) {
+      // console.log(seatRow);
       const row = [];
       for (let seat of seatRow.seats) {
+        console.log(seat);
         seat.availability ? row.push("green") : row.push("red");
       }
       initialGrid.push(row);
     }
+    console.log(user);
     setGrid(initialGrid);
   };
 
@@ -51,13 +56,40 @@ const SeatsGrid = ({ user, seats, noTickets }) => {
     return false;
   };
 
-  // todo
-  const loggedInCheckout = () => {
+  const loggedInCheckout = async () => {
     if (checkSeats()) {
-      console.log("checkout");
-      // add tickets to db
-      // console.log them
+      try {
+        for (let i = 0; i < noTickets; i++) {
+          console.log(seanse._id);
+          await api
+            .post("/tickets/addTicket", {
+              date: seanse.starttime,
+              seanseid: seanse._id,
+              type: i < noRegularTickets ? "regular" : "student",
+              userid: user.id,
+              row: selectedSeats[i][0],
+              col: selectedSeats[i][1],
+              price:
+                i < noRegularTickets
+                  ? seanse["3d"]
+                    ? prices.normal["3d"]
+                    : prices.normal["2d"]
+                  : seanse["3d"]
+                  ? prices.student["3d"]
+                  : prices.student["2d"],
+            })
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      } catch (error) {
+        console.log(error);
+      }
       // router to main
+      // navigate("/");
     }
   };
 
@@ -70,6 +102,7 @@ const SeatsGrid = ({ user, seats, noTickets }) => {
 
   return (
     <div className="square-grid">
+      {console.log(seanse)}
       <div className="grid-container">
         {grid.map((row, rowIndex) => (
           <div key={rowIndex} className="grid-row">
