@@ -82,16 +82,12 @@ const SeatsGrid = ({
     if (checkSeats()) {
       let flag = true;
       try {
-        for (let i = 0; i < noTickets; i++) {
-          console.log(seanse._id);
-          await api
-            .post("/tickets/addTicket", {
-              date: seanse.starttime,
-              seanseid: seanse._id,
-              type: i < noRegularTickets ? "regular" : "student",
-              userid: user.id,
+          let seats = [];
+          for (let i = 0; i < noTickets; i++) {
+            seats.push({
               row: selectedSeats[i][0],
               col: selectedSeats[i][1],
+              type: i < noRegularTickets ? "regular" : "student",
               price:
                 i < noRegularTickets
                   ? seanse["3d"]
@@ -100,6 +96,25 @@ const SeatsGrid = ({
                   : seanse["3d"]
                   ? prices.student["3d"]
                   : prices.student["2d"],
+            });
+          }
+          await api
+            .post("/tickets/addTicket", {
+              date: seanse.starttime,
+              seanseid: seanse._id,
+              // type: i < noRegularTickets ? "regular" : "student",
+              userid: user.id,
+              // row: selectedSeats[i][0],
+              // col: selectedSeats[i][1],
+              // price:
+              //   i < noRegularTickets
+              //     ? seanse["3d"]
+              //       ? prices.normal["3d"]
+              //       : prices.normal["2d"]
+              //     : seanse["3d"]
+              //     ? prices.student["3d"]
+              //     : prices.student["2d"],
+              seats: seats
             })
             .then((response) => {
               console.log(response);
@@ -108,7 +123,6 @@ const SeatsGrid = ({
               console.log(error);
               flag = false;
             });
-        }
       } catch (error) {
         console.log(error);
         flag = false;
@@ -134,17 +148,12 @@ const SeatsGrid = ({
     if (checkSeats()) {
       let flag = true;
       try {
-        for (let i = 0; i < noTickets; i++) {
-          await api
-            .post("/tickets/addTicket", {
-              date: seanse.starttime,
-              seanseid: seanse._id,
-              type: i < noRegularTickets ? "regular" : "student",
-              name: firstName,
-              surname: lastName,
-              email: email,
+        let seats = [];
+          for (let i = 0; i < noTickets; i++) {
+            seats.push({
               row: selectedSeats[i][0],
               col: selectedSeats[i][1],
+              type: i < noRegularTickets ? "regular" : "student",
               price:
                 i < noRegularTickets
                   ? seanse["3d"]
@@ -153,6 +162,16 @@ const SeatsGrid = ({
                   : seanse["3d"]
                   ? prices.student["3d"]
                   : prices.student["2d"],
+            });
+          }
+          await api
+            .post("/tickets/addTicket", {
+              date: seanse.starttime,
+              seanseid: seanse._id,
+              name: firstName,
+              surname: lastName,
+              email: email,
+              seats: seats
             })
             .then((response) => {
               console.log(response);
@@ -161,7 +180,6 @@ const SeatsGrid = ({
               console.log(error);
               flag = false;
             });
-        }
       } catch (error) {
         console.log(error);
         flag = false;

@@ -46,7 +46,6 @@ const testAddTicket = async (req, res) => {
       // niezalogowany, sprawdzić bazę
       const email = req.body.email;
       user = await User.findOne({ email: email });
-      console.log(user);
       if (user) {
         //użytkownik w bazie, sprawdź, czy jest zarejestrowany
         if (user.password) {
