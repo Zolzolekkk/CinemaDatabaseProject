@@ -100,6 +100,7 @@ const testAddTicket = async (req, res) => {
     const moviedate = seanseFound.starttime;
     const moviename = movie.title;
     const is3d = seanseFound['3d'];
+    const seanseid = seanseFound._id;
     // const is3d = req.body.is3d;
     const roomnumber = room.number;
     const row = req.body.row;
@@ -142,6 +143,7 @@ const testAddTicket = async (req, res) => {
         id: new mongoose.Types.ObjectId(),
         userid: user._id,
         programmeid: programme._id,
+        seanseid: seanseid,
         price: req.body.price,
         type: req.body.type,
         movieinfo: {

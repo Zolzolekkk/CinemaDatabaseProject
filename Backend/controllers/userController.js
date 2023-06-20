@@ -53,7 +53,7 @@ const loginUser = async (req, res) => {
   // console.log(req.body)
   const { email, password } = req.body
   if (!email || !password) {
-    throw new Error("Email or password hashnt been specified")
+    throw new Error("Email or password hasnt been specified")
   }
   try {
     const foundUser = await User.findOne({ email: email })

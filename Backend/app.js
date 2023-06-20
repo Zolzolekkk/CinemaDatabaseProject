@@ -4,12 +4,12 @@ import morgan from "morgan";
 import path from "path";
 import express from "express";
 
-import router from "./routes/routes.js"
 import userRouter from "./routes/userRoutes.js"
 import roomRouter from "./routes/roomRoutes.js"
 import programmeRouter from "./routes/programmeRoutes.js"
-import ticketRouter from "./routes/ticketRouter.js"
+import ticketRouter from "./routes/ticketRoutes.js"
 import moviesRouter from "./routes/moviesRoutes.js"
+import priceRouter from "./routes/priceRoutes.js"
 
 import cors from 'cors';
 
@@ -45,12 +45,12 @@ app.use(express.json());
 /* "Routes" */
 /* ******** */
 
-// app.use("/", router)
 app.use("/api/users", userRouter)
 app.use("/api/programmes", programmeRouter)
 app.use("/api/rooms", roomRouter)
 app.use("/api/tickets", ticketRouter)
 app.use("/api/movies", moviesRouter)
+app.use("/api/price", priceRouter)
 
 
 // app.get("/programme", async function (request, response) {
