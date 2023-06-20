@@ -127,12 +127,14 @@ const SeatsGrid = ({
 
   const noAccountCheckout = async (event) => {
     event.preventDefault();
+    if (firstName.length === 0 || lastName.length === 0 || email.length === 0) { 
+      alert("Please fill all fields!");
+      return null;
+    }
     if (checkSeats()) {
-      console.log("no account checkout");
       let flag = true;
       try {
         for (let i = 0; i < noTickets; i++) {
-          console.log(seanse._id);
           await api
             .post("/tickets/addTicket", {
               date: seanse.starttime,
