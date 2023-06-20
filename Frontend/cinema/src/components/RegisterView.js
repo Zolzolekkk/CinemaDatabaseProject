@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./RegisterView.css";
+import api from "../api/axiosConfig";
+import {useNavigate} from "react-router-dom";
 
 const RegisterView = () => {
   const [firstName, setFirstName] = useState("");
@@ -7,6 +9,8 @@ const RegisterView = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
@@ -28,17 +32,28 @@ const RegisterView = () => {
     setRepeatPassword(event.target.value);
   };
 
-  const handleRegistration = (event) => {
+  const handleRegistration = async (event) => {
     event.preventDefault();
     if (password !== repeatPassword) {
       alert("Passwords do not match!");
       return;
     }
     // todo: send registration request
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      const response = await api.post("/users/register", {
+        name: firstName,
+        email: email,
+        surname: lastName,
+        password: password,
+      }).then((response) => {
+        if (response.status == 200) {
+          navigate("/login");
+        }
+      });
+    } catch (error) {
+      alert("Registration failed");
+      console.log(error);
+    }
     // Reset form fields
     setFirstName("");
     setLastName("");

@@ -1,7 +1,7 @@
 import User from "../model/user.js"
 import mongoose from "mongoose";
 import { ObjectId } from "mongoose"
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 const generateHash = async (plaintextPassword) => {
   const saltRounds = 10;

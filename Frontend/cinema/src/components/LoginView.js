@@ -1,26 +1,44 @@
-import React, { useState } from 'react';
-import './LoginView.css';
+import React, { useState } from "react";
+import "./LoginView.css";
+import api from "../api/axiosConfig";
+import {useNavigate} from "react-router-dom";
 
-const LoginView = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const LoginView = ({user, setUser}) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+  const navigate = useNavigate();
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
     // TODO: Send login request
-    console.log('Username:', username);
-    console.log('Password:', password);
+    try {
+      const response = await api
+        .post("/users/login", { email: email, password: password })
+        .then((response) => {
+          // console.log(response.data.user);
+          if (response.status == 200) {
+            setUser(response.data.user);
+            navigate("/");
+          } else {
+            alert("Login failed");
+          }
+        });
+    } catch (error) {
+      alert("Login failed");
+      console.log(error);
+    }
     // Reset form fields
-    setUsername('');
-    setPassword('');
+    setEmail("");
+    setPassword("");
   };
 
   return (
@@ -28,12 +46,12 @@ const LoginView = () => {
       <form className="login-form" onSubmit={handleLogin}>
         <h2>Login</h2>
         <div className="form-group">
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="username">E-mail:</label>
           <input
             type="text"
             id="username"
-            value={username}
-            onChange={handleUsernameChange}
+            value={email}
+            onChange={handleEmailChange}
           />
         </div>
         <div className="form-group">

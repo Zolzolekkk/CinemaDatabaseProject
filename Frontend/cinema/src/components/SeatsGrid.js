@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "./SeatsGrid.css";
 
-const SeatsGrid = ({ rows, columns, noTickets }) => {
+const SeatsGrid = ({ user, seats, noTickets }) => {
   const [grid, setGrid] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [correctSeats, setCorrectSeats] = useState(true);
 
   const initializeGrid = () => {
     const initialGrid = [];
-    for (let i = 0; i < rows; i++) {
+    // console.log(seats);
+    for (let seatRow of seats) {
+      console.log(seatRow);
       const row = [];
-      for (let j = 0; j < columns; j++) {
-        row.push("green");
+      for (let seat of seatRow.seats) {
+        seat.availability ? row.push("green") : row.push("red");
       }
       initialGrid.push(row);
     }
@@ -52,18 +54,18 @@ const SeatsGrid = ({ rows, columns, noTickets }) => {
   // todo
   const loggedInCheckout = () => {
     if (checkSeats()) {
-        console.log("checkout");
-        // add tickets to db
-        // console.log them
-        // router to main
-        }
-  }
+      console.log("checkout");
+      // add tickets to db
+      // console.log them
+      // router to main
+    }
+  };
 
   const noAccountCheckout = () => {
     if (checkSeats()) {
-        console.log("checkout");
-        // router to checkout
-        }
+      console.log("checkout");
+      // router to checkout
+    }
   };
 
   return (
@@ -85,11 +87,18 @@ const SeatsGrid = ({ rows, columns, noTickets }) => {
         ))}
       </div>
       <div className="seats-buttons">
-        {/* gdy zalogowany */}
-        {/* <button className="seats-button" onClick={() => loggedInCheckout()}>Checkout</button> */}
-        {/* gdy niezalogowany */}
-        <button onClick={() => noAccountCheckout()}>Checkout without account</button> 
-        <button>Log in</button> 
+        {user != null ? (
+          <button className="seats-button" onClick={() => loggedInCheckout()}>
+            Checkout
+          </button>
+        ) : (
+          <div>
+            <button onClick={() => noAccountCheckout()}>
+              Checkout without account
+            </button>
+            <button>Log in</button>
+          </div>
+        )}
       </div>
     </div>
   );

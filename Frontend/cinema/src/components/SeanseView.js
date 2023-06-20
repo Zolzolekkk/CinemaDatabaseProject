@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import "./SeanseView.css";
 import SeatsGrid from "./SeatsGrid";
+import { useParams } from 'react-router-dom';
 
-const SeanseView = (seanse) => {
+const SeanseView = ({programme, user}) => {
   const [normalTickets, setNormalTickets] = useState(0);
   const [studentTickets, setStudentTickets] = useState(0);
+
+  const { seanseID } = useParams();
 
   const handleNormalTicketChange = (event) => {
     const quantity = parseInt(event.target.value);
@@ -31,8 +34,11 @@ const SeanseView = (seanse) => {
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   ];
 
+  const seanse = programme.find((seanse) => seanse._id === seanseID);
+
   return (
     <div className="seanse-view-container">
+      {console.log(seanse)}
       <table
         className="ticketTable"
         cellSpacing="0"
@@ -158,7 +164,7 @@ const SeanseView = (seanse) => {
         </tbody>
       </table>
       {normalTickets + studentTickets > 0 ? <div>
-        <SeatsGrid rows={12} columns={10} noTickets={normalTickets + studentTickets}/>
+        <SeatsGrid seats={seanse[0].seats} noTickets={normalTickets + studentTickets} user={user}/>
       </div> : null}
     </div>
   );

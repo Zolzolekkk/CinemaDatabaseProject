@@ -1,28 +1,43 @@
 import React from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import "./Programme.css";
 
-const Programme = ({ movie }) => {
+const Programme = ({ seanses }) => {
   const navigate = useNavigate();
+
+  const getTime = (time) => {
+    const date = new Date(time);
+
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <div>
-      {movie ? (
+      {seanses != undefined && seanses.length > 0 ? (
         <div className="movie">
-          {console.log(movie)}
-          <img className="poster" src={movie.poster} alt={movie.title} />
+          <img
+            className="poster"
+            src={seanses[0].movieid.poster}
+            alt={seanses[0].movieid.title}
+          />
           <div className="details">
-            <h2 className="title">{movie.title}</h2>
-            <p className="description">{movie.genres[0]}, {movie.genres[1]}, {movie.genres[2]}</p>
-            {/* <p className="format">{is3D ? '3D' : '2D'}</p> */}
-            <p className="format">3D DUB</p>
+            <h2 className="title">{seanses[0].movieid.title}</h2>
+            <p className="description">
+              {seanses[0].movieid.genres[0]}, {seanses[0].movieid.genres[1]},{" "}
+              {seanses[0].movieid.genres[2]}
+            </p>
+            <p className="format">{seanses[0].movieid["3d"] ? "3D" : "2D"}</p>
             <div className="showtimes">
-              {/* {showtimes.map((time, index) => ( */}
-              <button className="showtime-button" onClick={() => navigate(`/Seanse/${1}`)}>11:00 {/*todo*/}</button> 
-              <button className="showtime-button">14:00 {/*todo*/}</button> 
-              <button className="showtime-button">17:00 {/*todo*/}</button> 
-
-              {/* ))} */}
+              {seanses.map((seanse) => <button
+                className="showtime-button"
+                onClick={() => navigate(`/Seanse/:${seanse._id}}`)}
+              >
+                {getTime(seanse.starttime)}
+              </button>)}
             </div>
           </div>
         </div>

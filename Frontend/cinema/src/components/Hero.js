@@ -9,7 +9,6 @@ import Button from 'react-bootstrap/Button';
 const Hero = ({ movies }) => {
   return (
     <div>
-      {console.log(movies)}
       <Carousel className="movie-carousel-container">
         {movies?.map((movie) => {
           return (
