@@ -16,6 +16,7 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [programme, setProgramme] = useState([]);
   const [user, setUser] = useState(null);
+  const [firstDay, setFirstDay] = useState(null);
 
   const getMovies = async () => {
     try {
@@ -30,6 +31,7 @@ function App() {
   const getProgramme = async () => {
     try {
       const response = await api.get("programmes/getProgrammesWeekly");
+      setFirstDay(new Date(response.data.programmes[0].starttime));
       const seansesByDay = response.data.programmes.map((item) =>
         Object.entries(item.days).map(([day, { seanses }]) => seanses)
       );
@@ -53,7 +55,7 @@ function App() {
           <Route path="/Trailer/:ytTrailerId" element={<Trailer />}></Route>
           <Route
             path="/programme"
-            element={<ProgrammeView programme={programme} />}
+            element={<ProgrammeView programme={programme} firstDay={firstDay} />}
           ></Route>
           <Route path="/seanse/:seanseID" element={<SeanseView programme={programme} user={user}/>}></Route>
           <Route path="/login" element={<LoginView user={user} setUser={setUser}/>}></Route>

@@ -1,0 +1,14 @@
+.date-container {
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .arrow-button {
+    /* Styles for the arrow buttons */
+    margin: 0 10px;
+  }
+  
+
+  
