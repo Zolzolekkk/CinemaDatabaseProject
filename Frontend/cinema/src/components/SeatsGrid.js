@@ -179,6 +179,7 @@ const SeatsGrid = ({
             .catch((error) => {
               console.log(error);
               flag = false;
+              alert("Error occured!");
             });
       } catch (error) {
         console.log(error);

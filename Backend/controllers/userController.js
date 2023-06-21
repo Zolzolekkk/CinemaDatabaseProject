@@ -52,10 +52,10 @@ const registerUser = async (req, res) => { //email na razie (ew. hasło etc.)
 const loginUser = async (req, res) => {
   // console.log(req.body)
   const { email, password } = req.body
-  if (!email || !password) {
-    throw new Error("Email or password hasnt been specified")
-  }
   try {
+    if (!email || !password) {
+      throw new Error("Email or password hasnt been specified")
+    }
     const foundUser = await User.findOne({ email: email })
     if (!foundUser) {
       throw new Error("User of given email doesnt exist")

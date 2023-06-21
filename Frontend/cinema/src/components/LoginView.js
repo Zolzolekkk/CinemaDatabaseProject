@@ -26,7 +26,7 @@ const LoginView = ({ user, setUser }) => {
       const response = await api
         .post("/users/login", { email: email, password: password })
         .then((response) => {
-          // console.log(response.data.user);
+          console.log(response.data.user);
           if (response.status == 200) {
             if (seanseID) {
               navigate(`/seanse/${seanseID.replace(/[:}]/g, "")}`);
